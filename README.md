@@ -1,36 +1,114 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LearnMate Campus 🎓
 
-## Getting Started
+Platform Pembelajaran Digital Kampus - Dibangun dengan Next.js, SQLite (Prisma ORM), dan NextAuth.
 
-First, run the development server:
+## Tech Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS 4
+- **Database**: SQLite (`prisma/dev.db`)
+- **ORM**: Prisma 6
+- **Auth**: NextAuth.js v5 (beta)
+- **Icons**: Lucide React
+
+## Fitur
+
+### 👨‍🎓 Mahasiswa
+- Dashboard dengan statistik belajar
+- Jadwal kuliah hari ini
+- Daftar mata kuliah aktif dengan progress
+- Detail mata kuliah (materi, tugas, pengumuman)
+- Portal Quiz & Evaluasi
+- Rekap Nilai
+
+### 👨‍🏫 Dosen
+- Dashboard dengan statistik mengajar
+- Jadwal mengajar hari ini
+- Mata kuliah yang diampu
+- Daftar mahasiswa
+- Manajemen tugas & penilaian
+- Manajemen quiz
+
+## Setup & Instalasi
+
+### 1. Setup Environment
+
+Konfigurasi `.env` menggunakan SQLite (tanpa perlu install database server eksternal):
+
+```bash
+DATABASE_URL="file:./dev.db"
+AUTH_SECRET="super-secret-key-change-in-production"
+AUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="super-secret-key-change-in-production"
+NEXTAUTH_URL="http://localhost:3000"
+```
+
+### 2. Install Dependencies & Setup Database
+
+```bash
+npm install
+npm run db:setup    # Push schema ke SQLite & seed data
+```
+
+### 3. Jalankan Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Buka [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Akun Demo & Development Shortcut
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Tersedia fitur **1-Click Quick Login** di halaman login (`/login`). Anda dapat langsung klik akun untuk masuk tanpa mengetik:
 
-## Learn More
+| Role | Nama | Email | Password |
+|------|------|-------|----------|
+| Mahasiswa | Budi Santoso | `budi@student.learnmate.ac.id` | `password123` |
+| Mahasiswa | Ani Wijaya | `ani@student.learnmate.ac.id` | `password123` |
+| Dosen | Dr. Ahmad Fauzi, M.Kom | `dr.ahmad@learnmate.ac.id` | `password123` |
+| Dosen | Prof. Siti Nurhaliza, Ph.D | `prof.siti@learnmate.ac.id` | `password123` |
+| Admin | Administrator Kampus | `admin@learnmate.ac.id` | `password123` |
 
-To learn more about Next.js, take a look at the following resources:
+## Struktur Project
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+├── app/
+│   ├── api/auth/[...nextauth]/   # NextAuth API route
+│   ├── dashboard/
+│   │   ├── mata-kuliah/          # Halaman mata kuliah
+│   │   │   └── [id]/            # Detail mata kuliah
+│   │   ├── tugas/               # Halaman tugas
+│   │   ├── quiz/                # Halaman quiz & evaluasi
+│   │   ├── nilai/               # Halaman rekap nilai
+│   │   ├── mahasiswa/           # Halaman daftar mahasiswa (dosen)
+│   │   └── settings/            # Halaman pengaturan
+│   ├── login/                   # Halaman login
+│   └── globals.css
+├── components/
+│   ├── Header.tsx
+│   ├── Sidebar.tsx
+│   └── StatCard.tsx
+├── lib/
+│   ├── auth.ts                  # NextAuth configuration
+│   └── prisma.ts                # Prisma client singleton
+├── types/
+│   └── next-auth.d.ts           # NextAuth type augmentation
+└── middleware.ts                 # Route protection
+prisma/
+├── schema.prisma                # Database schema
+└── seed.ts                      # Seed data
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Scripts
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run db:push` | Push schema to database |
+| `npm run db:seed` | Seed database with sample data |
+| `npm run db:setup` | Push schema + seed (combined) |
+| `npm run db:studio` | Open Prisma Studio |

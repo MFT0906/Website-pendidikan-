@@ -1,0 +1,203 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  MAHASISWA
+  DOSEN
+  ADMIN
+}
+
+enum Hari {
+  SENIN
+  SELASA
+  RABU
+  KAMIS
+  JUMAT
+  SABTU
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  name          String
+  role          Role
+  avatar        String?
+  nim           String?   @unique
+  nip           String?   @unique
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relasi Mahasiswa
+  enrollments   Enrollment[]
+  quizAttempts  QuizAttempt[]
+  submissions   TugasSubmission[]
+
+  // Relasi Dosen
+  mataKuliahDosen MataKuliah[] @relation("DosenMataKuliah")
+
+  @@map("users")
+}
+
+model MataKuliah {
+  id          String   @id @default(cuid())
+  kode        String   @unique
+  nama        String
+  sks         Int
+  semester    Int
+  deskripsi   String?
+  icon        String?
+  warna       String?  @default("#3B82F6")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  dosenId     String
+  dosen       User     @relation("DosenMataKuliah", fields: [dosenId], references: [id])
+
+  jadwal      Jadwal[]
+  materi      Materi[]
+  tugas       Tugas[]
+  quizzes     Quiz[]
+  enrollments Enrollment[]
+  pengumuman  Pengumuman[]
+
+  @@map("mata_kuliah")
+}
+
+model Enrollment {
+  id          String   @id @default(cuid())
+  userId      String
+  mataKuliahId String
+  createdAt   DateTime @default(now())
+
+  user        User       @relation(fields: [userId], references: [id])
+  mataKuliah  MataKuliah @relation(fields: [mataKuliahId], references: [id])
+
+  @@unique([userId, mataKuliahId])
+  @@map("enrollments")
+}
+
+model Jadwal {
+  id          String   @id @default(cuid())
+  hari        Hari
+  jamMulai    String
+  jamSelesai  String
+  ruangan     String
+  mataKuliahId String
+
+  mataKuliah  MataKuliah @relation(fields: [mataKuliahId], references: [id])
+
+  @@map("jadwal")
+}
+
+model Materi {
+  id          String   @id @default(cuid())
+  judul       String
+  deskripsi   String?
+  pertemuan   Int
+  fileUrl     String?
+  videoUrl    String?
+  selesai     Boolean  @default(false)
+  mataKuliahId String
+  createdAt   DateTime @default(now())
+
+  mataKuliah  MataKuliah @relation(fields: [mataKuliahId], references: [id])
+
+  @@map("materi")
+}
+
+model Tugas {
+  id          String   @id @default(cuid())
+  judul       String
+  deskripsi   String?
+  deadline    DateTime
+  nilaiMax    Int      @default(100)
+  mataKuliahId String
+  createdAt   DateTime @default(now())
+
+  mataKuliah  MataKuliah      @relation(fields: [mataKuliahId], references: [id])
+  submissions TugasSubmission[]
+
+  @@map("tugas")
+}
+
+model TugasSubmission {
+  id        String   @id @default(cuid())
+  fileUrl   String?
+  catatan   String?
+  nilai     Int?
+  userId    String
+  tugasId   String
+  createdAt DateTime @default(now())
+
+  user      User  @relation(fields: [userId], references: [id])
+  tugas     Tugas @relation(fields: [tugasId], references: [id])
+
+  @@unique([userId, tugasId])
+  @@map("tugas_submissions")
+}
+
+model Quiz {
+  id          String   @id @default(cuid())
+  judul       String
+  deskripsi   String?
+  durasi      Int      // dalam menit
+  jumlahSoal  Int
+  mataKuliahId String
+  deadline    DateTime?
+  createdAt   DateTime @default(now())
+
+  mataKuliah  MataKuliah   @relation(fields: [mataKuliahId], references: [id])
+  soal        SoalQuiz[]
+  attempts    QuizAttempt[]
+
+  @@map("quizzes")
+}
+
+model SoalQuiz {
+  id        String   @id @default(cuid())
+  pertanyaan String
+  opsiA     String
+  opsiB     String
+  opsiC     String
+  opsiD     String
+  jawaban   String   // A, B, C, D
+  quizId    String
+
+  quiz      Quiz @relation(fields: [quizId], references: [id])
+
+  @@map("soal_quiz")
+}
+
+model QuizAttempt {
+  id        String   @id @default(cuid())
+  nilai     Int
+  benar     Int
+  salah     Int
+  userId    String
+  quizId    String
+  createdAt DateTime @default(now())
+
+  user      User @relation(fields: [userId], references: [id])
+  quiz      Quiz @relation(fields: [quizId], references: [id])
+
+  @@map("quiz_attempts")
+}
+
+model Pengumuman {
+  id          String   @id @default(cuid())
+  judul       String
+  isi         String
+  mataKuliahId String
+  createdAt   DateTime @default(now())
+
+  mataKuliah  MataKuliah @relation(fields: [mataKuliahId], references: [id])
+
+  @@map("pengumuman")
+}

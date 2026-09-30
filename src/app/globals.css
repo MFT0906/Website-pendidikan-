@@ -82,3 +82,9 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #86868b;
 }
+
+@layer utilities {
+  .store-utility-card {
+    @apply bg-[#ffffff] rounded-[18px] border border-[#e0e0e0] overflow-hidden;
+  }
+}

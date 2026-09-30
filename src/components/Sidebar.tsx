@@ -55,14 +55,14 @@ export default function Sidebar({
   }
 
   const sidebarContent = (
-    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-full">
+    <aside className="w-64 bg-[#f5f5f7] border-r border-[#e0e0e0] flex flex-col h-full overflow-hidden text-[#1d1d1f]">
       {/* Logo Area */}
-      <div className="h-16 flex items-center justify-between px-6 border-b border-gray-200">
+      <div className="h-[52px] flex items-center justify-between px-5 border-b border-[#e0e0e0]">
         <Link href="/dashboard" className="flex items-center gap-2" onClick={onClose}>
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-            <GraduationCap className="w-5 h-5 text-white" />
+          <div className="w-7 h-7 bg-[#0066cc] rounded-[8px] flex items-center justify-center">
+            <GraduationCap className="w-4 h-4 text-white" />
           </div>
-          <span className="font-bold text-gray-900 text-lg tracking-tight">
+          <span className="font-semibold text-[17px] tracking-[-0.374px]">
             LearnMate
           </span>
         </Link>
@@ -70,37 +70,37 @@ export default function Sidebar({
           <button
             type="button"
             onClick={onClose}
-            className="md:hidden p-1 text-gray-400 hover:text-gray-600 rounded-md"
+            className="md:hidden p-1.5 text-[#1d1d1f] hover:bg-[#e8e8ed] rounded-full btn-press"
             aria-label="Tutup menu"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         )}
       </div>
 
       {/* User Profile */}
-      <div className="p-6 border-b border-gray-200">
+      <div className="p-5 border-b border-[#e0e0e0]">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-600 font-bold shrink-0">
+          <div className="w-10 h-10 rounded-full bg-white border border-[#e0e0e0] flex items-center justify-center text-[#1d1d1f] font-semibold text-[14px]">
             {userName.charAt(0).toUpperCase()}
           </div>
           <div className="overflow-hidden">
-            <p className="text-sm font-semibold text-gray-900 truncate">
+            <p className="text-[14px] font-semibold tracking-[-0.224px] truncate">
               {userName}
             </p>
-            <p className="text-xs text-gray-500 truncate">
+            <p className="text-[12px] text-[#7a7a7a] truncate font-normal">
               {userEmail}
             </p>
           </div>
         </div>
-        <div className="mt-3 inline-block px-2 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded">
+        <div className="mt-[12px] inline-block px-[10px] py-[3px] bg-white text-[#1d1d1f] text-[11px] font-medium tracking-wide rounded-full border border-[#e0e0e0]">
           {role}
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto p-4 space-y-1">
-        <p className="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+        <p className="px-3 text-[11px] font-semibold text-[#7a7a7a] uppercase tracking-wide mb-[10px]">
           Menu Utama
         </p>
         {menuItems.map((item) => {
@@ -112,13 +112,13 @@ export default function Sidebar({
               key={item.href}
               href={item.href}
               onClick={onClose}
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`flex items-center gap-3 px-3 py-[9px] rounded-full text-[14px] font-normal tracking-[-0.224px] btn-press transition-colors ${
                 isActive
-                  ? "bg-blue-50 text-blue-700"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  ? "bg-[#0066cc] text-white font-medium"
+                  : "text-[#1d1d1f] hover:bg-[#e8e8ed]"
               }`}
             >
-              <Icon className={`w-5 h-5 ${isActive ? "text-blue-700" : "text-gray-400"}`} />
+              <Icon className={`w-[18px] h-[18px] ${isActive ? "text-white" : "text-[#7a7a7a]"}`} />
               {item.label}
             </Link>
           );
@@ -126,21 +126,25 @@ export default function Sidebar({
       </nav>
 
       {/* Bottom Actions */}
-      <div className="p-4 border-t border-gray-200 space-y-1">
+      <div className="p-3 border-t border-[#e0e0e0] space-y-1 bg-[#f5f5f7]">
         <Link
           href="/dashboard/settings"
           onClick={onClose}
-          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+          className={`flex items-center gap-3 px-3 py-[9px] rounded-full text-[14px] font-normal tracking-[-0.224px] btn-press transition-colors ${
+            pathname === "/dashboard/settings"
+              ? "bg-[#0066cc] text-white font-medium"
+              : "text-[#1d1d1f] hover:bg-[#e8e8ed]"
+          }`}
         >
-          <Settings className="w-5 h-5 text-gray-400" />
+          <Settings className={`w-[18px] h-[18px] ${pathname === "/dashboard/settings" ? "text-white" : "text-[#7a7a7a]"}`} />
           Pengaturan
         </Link>
         <button
           type="button"
           onClick={() => signOut({ callbackUrl: "/login" })}
-          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+          className="w-full flex items-center gap-3 px-3 py-[9px] rounded-full text-[14px] font-normal tracking-[-0.224px] text-[#1d1d1f] hover:bg-[#e8e8ed] btn-press transition-colors"
         >
-          <LogOut className="w-5 h-5 text-red-500" />
+          <LogOut className="w-[18px] h-[18px] text-[#7a7a7a]" />
           Keluar
         </button>
       </div>
@@ -149,12 +153,10 @@ export default function Sidebar({
 
   return (
     <>
-      {/* Desktop Persistent Sidebar */}
       <div className="hidden md:block fixed left-0 top-0 h-screen z-40">
         {sidebarContent}
       </div>
 
-      {/* Mobile Drawer */}
       <div
         className={`md:hidden fixed inset-0 z-50 transition-opacity duration-300 ${
           isOpen
@@ -164,7 +166,7 @@ export default function Sidebar({
       >
         <div
           onClick={onClose}
-          className="absolute inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
+          className="absolute inset-0 bg-[#000000]/40 backdrop-blur-sm transition-opacity"
         />
 
         <div

@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Header from "@/components/Header";
 import StatCard from "@/components/StatCard";
-import { BookOpen, CheckSquare, Clock, FileText } from "lucide-react";
+import { BookOpen, CheckSquare, Clock, FileText, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 export default async function MahasiswaDashboard({
@@ -46,9 +46,9 @@ export default async function MahasiswaDashboard({
         subtitle="Ringkasan aktivitas akademik Anda"
       />
 
-      <div className="p-8 max-w-7xl mx-auto space-y-8">
+      <div className="p-4 sm:p-8 max-w-[1440px] mx-auto space-y-6">
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           <StatCard
             title="Mata Kuliah Aktif"
             value={enrollments.length}
@@ -76,57 +76,63 @@ export default async function MahasiswaDashboard({
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Jadwal Hari Ini */}
-          <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-lg font-bold text-gray-900">Jadwal Hari Ini</h2>
+          <div className="lg:col-span-2 store-utility-card flex flex-col">
+            <div className="pb-4 border-b border-[#f0f0f0] mb-4 flex items-center justify-between">
+              <h2 className="text-[17px] font-semibold text-[#1d1d1f] tracking-tight">Jadwal Hari Ini</h2>
+              <span className="text-[12px] font-medium text-[#7a7a7a] bg-[#f5f5f7] px-2.5 py-0.5 rounded-full border border-[#e0e0e0]">
+                {hariIni}
+              </span>
             </div>
-            <div className="p-6">
+            
+            <div className="flex-1">
               {jadwalHariIni.length > 0 ? (
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {jadwalHariIni.map((jadwal) => (
                     <div
                       key={jadwal.id}
-                      className="flex items-center gap-4 p-4 rounded-lg border border-gray-100 bg-gray-50"
+                      className="flex items-center gap-4 p-4 rounded-[12px] border border-[#e0e0e0] bg-[#f5f5f7]"
                     >
-                      <div className="w-16 text-center shrink-0">
-                        <div className="text-sm font-bold text-gray-900">{jadwal.jamMulai}</div>
-                        <div className="text-xs text-gray-500">{jadwal.jamSelesai}</div>
+                      <div className="w-[60px] text-center shrink-0">
+                        <div className="text-[14px] font-semibold text-[#1d1d1f]">{jadwal.jamMulai}</div>
+                        <div className="text-[12px] text-[#7a7a7a] mt-0.5">{jadwal.jamSelesai}</div>
                       </div>
-                      <div className="w-px h-10 bg-gray-200"></div>
+                      <div className="w-px h-10 bg-[#e0e0e0]"></div>
                       <div>
-                        <h3 className="font-semibold text-gray-900">{jadwal.mk.nama}</h3>
-                        <p className="text-sm text-gray-500">Ruang {jadwal.ruangan}</p>
+                        <h3 className="text-[15px] font-semibold text-[#1d1d1f]">{jadwal.mk.nama}</h3>
+                        <p className="text-[13px] text-[#7a7a7a] mt-0.5">Ruang {jadwal.ruangan}</p>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8 text-gray-500">
-                  Tidak ada jadwal kuliah hari ini.
+                <div className="text-center py-12 text-[#7a7a7a]">
+                  <Clock className="w-8 h-8 mx-auto mb-3 opacity-30 text-[#1d1d1f]" />
+                  <p className="text-[14px]">Tidak ada jadwal kuliah hari ini.</p>
                 </div>
               )}
             </div>
           </div>
 
           {/* Mata Kuliah List */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-gray-200 flex justify-between items-center">
-              <h2 className="text-lg font-bold text-gray-900">Mata Kuliah</h2>
-              <Link href="/dashboard/mata-kuliah" className="text-sm text-blue-600 hover:underline">
+          <div className="store-utility-card flex flex-col">
+            <div className="pb-4 border-b border-[#f0f0f0] mb-4 flex justify-between items-center">
+              <h2 className="text-[17px] font-semibold text-[#1d1d1f] tracking-tight">Mata Kuliah</h2>
+              <Link href="/dashboard/mata-kuliah" className="text-[13px] text-[#0066cc] hover:underline font-normal btn-press flex items-center gap-0.5">
                 Lihat Semua
+                <ChevronRight className="w-3.5 h-3.5" />
               </Link>
             </div>
-            <div className="divide-y divide-gray-100">
+            <div className="space-y-3 flex-1">
               {enrollments.slice(0, 5).map((e) => (
                 <Link
                   key={e.id}
                   href={`/dashboard/mata-kuliah/${e.mataKuliah.id}`}
-                  className="block p-4 hover:bg-gray-50 transition-colors"
+                  className="block p-4 rounded-[14px] border border-[#e0e0e0] bg-[#f5f5f7] hover:border-[#1d1d1f]/30 transition-all btn-press group"
                 >
-                  <div className="font-medium text-gray-900">{e.mataKuliah.nama}</div>
-                  <div className="text-sm text-gray-500 mt-1">{e.mataKuliah.kode} • {e.mataKuliah.sks} SKS</div>
+                  <div className="text-[15px] font-semibold text-[#1d1d1f] group-hover:text-[#0066cc] transition-colors truncate">{e.mataKuliah.nama}</div>
+                  <div className="text-[13px] text-[#7a7a7a] mt-1">{e.mataKuliah.kode} • {e.mataKuliah.sks} SKS</div>
                 </Link>
               ))}
             </div>

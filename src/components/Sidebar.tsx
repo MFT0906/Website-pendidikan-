@@ -2,194 +2,146 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import {
   LayoutDashboard,
   BookOpen,
-  ClipboardList,
   FileText,
-  BarChart3,
+  CheckSquare,
+  BarChart,
   Settings,
   LogOut,
   GraduationCap,
   Users,
-  ShieldCheck,
   X,
-  Database,
 } from "lucide-react";
 
 interface SidebarProps {
-  role: "MAHASISWA" | "DOSEN" | "ADMIN";
-  userName: string;
-  userEmail: string;
+  role?: "MAHASISWA" | "DOSEN" | "ADMIN" | string;
+  userName?: string;
+  userEmail?: string;
   isOpen?: boolean;
   onClose?: () => void;
 }
 
-const mahasiswaMenu = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/dashboard/mata-kuliah", label: "Mata Kuliah", icon: BookOpen },
-  { href: "/dashboard/tugas", label: "Tugas", icon: ClipboardList },
-  { href: "/dashboard/quiz", label: "Quiz & Evaluasi", icon: FileText },
-  { href: "/dashboard/nilai", label: "Nilai", icon: BarChart3 },
-];
-
-const dosenMenu = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/dashboard/mata-kuliah", label: "Mata Kuliah", icon: BookOpen },
-  { href: "/dashboard/mahasiswa", label: "Mahasiswa", icon: Users },
-  { href: "/dashboard/tugas", label: "Tugas & Penilaian", icon: ClipboardList },
-  { href: "/dashboard/quiz", label: "Quiz & Evaluasi", icon: FileText },
-];
-
-const adminMenu = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/dashboard/mata-kuliah", label: "Mata Kuliah", icon: BookOpen },
-  { href: "/dashboard/mahasiswa", label: "Civitas Mahasiswa", icon: Users },
-  { href: "/dashboard/tugas", label: "Semua Tugas", icon: ClipboardList },
-  { href: "/dashboard/quiz", label: "Bank Quiz", icon: FileText },
-];
-
 export default function Sidebar({
-  role,
-  userName,
-  userEmail,
+  role: propRole,
+  userName: propUserName,
+  userEmail: propUserEmail,
   isOpen = false,
   onClose,
-}: SidebarProps) {
+}: SidebarProps = {}) {
   const pathname = usePathname();
+  const { data: session } = useSession();
 
-  const menu =
-    role === "ADMIN"
-      ? adminMenu
-      : role === "DOSEN"
-      ? dosenMenu
-      : mahasiswaMenu;
+  const role = propRole || (session?.user as any)?.role || "MAHASISWA";
+  const userName = propUserName || session?.user?.name || "User";
+  const userEmail = propUserEmail || session?.user?.email || "";
 
-  const roleLabel =
-    role === "ADMIN"
-      ? "Administrator"
-      : role === "DOSEN"
-      ? "Dosen & Peneliti"
-      : "Mahasiswa";
+  const menuItems = [
+    { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
+    { icon: BookOpen, label: "Mata Kuliah", href: "/dashboard/mata-kuliah" },
+    { icon: FileText, label: "Tugas", href: "/dashboard/tugas" },
+    { icon: CheckSquare, label: "Quiz & Evaluasi", href: "/dashboard/quiz" },
+    { icon: BarChart, label: "Nilai", href: "/dashboard/nilai" },
+  ];
+
+  if (role === "DOSEN") {
+    menuItems.splice(2, 0, {
+      icon: Users,
+      label: "Mahasiswa",
+      href: "/dashboard/mahasiswa",
+    });
+  }
 
   const sidebarContent = (
-    <aside className="w-64 bg-[#f5f5f7] min-h-screen flex flex-col border-r border-[#e0e0e0] select-none text-[#1d1d1f]">
-      {/* Brand Header */}
-      <div className="h-[52px] px-5 border-b border-[#e0e0e0] flex items-center justify-between bg-[#f5f5f7]">
-        <Link
-          href="/dashboard"
-          onClick={onClose}
-          className="flex items-center gap-2.5 group"
-        >
-          <div className="w-7 h-7 rounded-full bg-[#1d1d1f] flex items-center justify-center text-white shrink-0 group-hover:bg-[#0066cc] transition-colors btn-press">
-            <GraduationCap className="w-4 h-4" />
+    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-full">
+      {/* Logo Area */}
+      <div className="h-16 flex items-center justify-between px-6 border-b border-gray-200">
+        <Link href="/dashboard" className="flex items-center gap-2" onClick={onClose}>
+          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+            <GraduationCap className="w-5 h-5 text-white" />
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="text-[17px] font-semibold text-[#1d1d1f] tracking-tight leading-none">
-              LearnMate
-            </span>
-            <span className="text-[10px] font-semibold text-[#7a7a7a] tracking-widest uppercase">
-              CAMPUS
-            </span>
-          </div>
+          <span className="font-bold text-gray-900 text-lg tracking-tight">
+            LearnMate
+          </span>
         </Link>
-
         {onClose && (
           <button
+            type="button"
             onClick={onClose}
-            className="md:hidden p-1.5 text-[#7a7a7a] hover:text-[#1d1d1f] rounded-full hover:bg-[#e8e8ed] transition-colors btn-press"
+            className="md:hidden p-1 text-gray-400 hover:text-gray-600 rounded-md"
             aria-label="Tutup menu"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         )}
       </div>
 
-      {/* User Capsule */}
-      <div className="p-4 mx-3 my-3 rounded-[18px] bg-white border border-[#e0e0e0]">
+      {/* User Profile */}
+      <div className="p-6 border-b border-gray-200">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-[#1d1d1f] text-white flex items-center justify-center text-xs font-semibold shrink-0">
-            {userName
-              .split(" ")
-              .map((n) => n[0])
-              .join("")
-              .slice(0, 2)
-              .toUpperCase()}
+          <div className="w-10 h-10 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-600 font-bold shrink-0">
+            {userName.charAt(0).toUpperCase()}
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-[14px] font-semibold text-[#1d1d1f] truncate leading-tight">
+          <div className="overflow-hidden">
+            <p className="text-sm font-semibold text-gray-900 truncate">
               {userName}
             </p>
-            <p className="text-[12px] text-[#7a7a7a] truncate mt-0.5 font-normal">
+            <p className="text-xs text-gray-500 truncate">
               {userEmail}
             </p>
           </div>
         </div>
-        <div className="mt-3 pt-2.5 border-t border-[#f0f0f0] flex items-center justify-between">
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#f5f5f7] text-[#1d1d1f] border border-[#e0e0e0]">
-            {roleLabel}
-          </span>
-          <span className="text-[11px] text-[#7a7a7a] font-mono">SQLite</span>
+        <div className="mt-3 inline-block px-2 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded">
+          {role}
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-2 space-y-1 overflow-y-auto">
-        <p className="text-[11px] font-semibold text-[#7a7a7a] uppercase tracking-wider px-3 mb-2">
-          Menu
+      <nav className="flex-1 overflow-y-auto p-4 space-y-1">
+        <p className="px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+          Menu Utama
         </p>
-        {menu.map((item) => {
-          const isActive =
-            pathname === item.href ||
-            (item.href !== "/dashboard" && pathname.startsWith(item.href));
-
-          const ItemIcon = item.icon;
+        {menuItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = pathname === item.href;
 
           return (
             <Link
               key={item.href}
               href={item.href}
               onClick={onClose}
-              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-full text-[14px] font-normal tracking-[-0.224px] btn-press transition-all ${
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                 isActive
-                  ? "bg-[#0066cc] text-white font-medium shadow-2xs"
-                  : "text-[#1d1d1f] hover:bg-[#e8e8ed]"
+                  ? "bg-blue-50 text-blue-700"
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
               }`}
             >
-              <ItemIcon
-                className={`w-4 h-4 shrink-0 ${
-                  isActive ? "text-white" : "text-[#7a7a7a]"
-                }`}
-              />
-              <span className="truncate">{item.label}</span>
+              <Icon className={`w-5 h-5 ${isActive ? "text-blue-700" : "text-gray-400"}`} />
+              {item.label}
             </Link>
           );
         })}
       </nav>
 
-      {/* Footer Area */}
-      <div className="p-3 border-t border-[#e0e0e0] space-y-1 bg-[#f5f5f7]">
+      {/* Bottom Actions */}
+      <div className="p-4 border-t border-gray-200 space-y-1">
         <Link
           href="/dashboard/settings"
           onClick={onClose}
-          className={`flex items-center gap-3 px-3.5 py-2 rounded-full text-[14px] btn-press transition-all ${
-            pathname === "/dashboard/settings"
-              ? "bg-[#0066cc] text-white font-medium"
-              : "text-[#1d1d1f] hover:bg-[#e8e8ed]"
-          }`}
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
         >
-          <Settings className="w-4 h-4 text-[#7a7a7a]" />
-          <span>Pengaturan</span>
+          <Settings className="w-5 h-5 text-gray-400" />
+          Pengaturan
         </Link>
-
         <button
           type="button"
           onClick={() => signOut({ callbackUrl: "/login" })}
-          className="w-full flex items-center gap-3 px-3.5 py-2 rounded-full text-[14px] text-[#7a7a7a] hover:text-[#1d1d1f] hover:bg-[#e8e8ed] btn-press transition-all"
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
         >
-          <LogOut className="w-4 h-4" />
-          <span>Keluar</span>
+          <LogOut className="w-5 h-5 text-red-500" />
+          Keluar
         </button>
       </div>
     </aside>
